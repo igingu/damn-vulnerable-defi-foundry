@@ -38,6 +38,8 @@ contract UnstoppableLender is ReentrancyGuard {
         if (balanceBefore < borrowAmount) revert NotEnoughTokensInPool();
 
         // Ensured by the protocol via the `depositTokens` function
+        // EXPLAIN - Sending one WEI directly to this contract will make
+        //         - poolBalance and balanceOf() differ.
         if (poolBalance != balanceBefore) revert AssertionViolated();
 
         damnValuableToken.transfer(msg.sender, borrowAmount);
