@@ -27,6 +27,7 @@ contract NaiveReceiverLenderPool is ReentrancyGuard {
         if (!borrower.isContract()) revert BorrowerMustBeADeployedContract();
 
         // Transfer ETH and handle control to receiver
+        // EXPLAIN - Because I can specify borrower, can force that address to pay 1 additional ETH
         borrower.functionCallWithValue(abi.encodeWithSignature("receiveEther(uint256)", FIXED_FEE), borrowAmount);
 
         if (address(this).balance < balanceBefore + FIXED_FEE) {
