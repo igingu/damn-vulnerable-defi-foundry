@@ -29,6 +29,7 @@ contract TrusterLenderPool is ReentrancyGuard {
         if (balanceBefore < borrowAmount) revert NotEnoughTokensInPool();
 
         damnValuableToken.transfer(borrower, borrowAmount);
+        // EXPLAIN - Key is here - Encode an ERC20.approve() for the hacker to pull out tokens
         target.functionCall(data);
 
         uint256 balanceAfter = damnValuableToken.balanceOf(address(this));
