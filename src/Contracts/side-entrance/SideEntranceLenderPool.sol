@@ -33,6 +33,8 @@ contract SideEntranceLenderPool {
         uint256 balanceBefore = address(this).balance;
         if (balanceBefore < amount) revert NotEnoughETHInPool();
 
+        // EXPLAIN - Flash loan 1000 ETH and deposit it. Below check will pass.
+        //         - Then withdraw it.
         IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();
 
         if (address(this).balance < balanceBefore) {
