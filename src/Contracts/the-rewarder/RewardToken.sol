@@ -15,6 +15,7 @@ contract RewardToken is ERC20, AccessControl {
     error Forbidden();
 
     constructor() ERC20("Reward Token", "RWT") {
+        // EXPLAIN - TheRewarderPool can mint
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(MINTER_ROLE, msg.sender);
     }

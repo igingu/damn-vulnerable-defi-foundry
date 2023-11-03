@@ -19,12 +19,15 @@ contract AccountingToken is ERC20Snapshot, AccessControl {
     error NotImplemented();
 
     constructor() ERC20("rToken", "rTKN") {
+        // EXPLAIN - TheRewarderPool can mint, burn and take snapshots
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(MINTER_ROLE, msg.sender);
         _setupRole(SNAPSHOT_ROLE, msg.sender);
         _setupRole(BURNER_ROLE, msg.sender);
     }
 
+    // EXPLAIN - while minting does not create a new snapshot, it does change the user's balance
+    //         - at the current snapshot
     function mint(address to, uint256 amount) external {
         if (!hasRole(MINTER_ROLE, msg.sender)) revert Forbidden();
         _mint(to, amount);

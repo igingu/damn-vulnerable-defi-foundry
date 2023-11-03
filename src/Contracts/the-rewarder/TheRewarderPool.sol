@@ -46,6 +46,11 @@ contract TheRewarderPool {
     /**
      * @notice sender must have approved `amountToDeposit` liquidity tokens in advance
      */
+    // EXPLAIN - Take flash loan and deposit it all
+    //         - By minting accToken, the user is registered with balance, for the current snapshot
+    //         - There is no need for another snapshot to be taken
+    //         - Afterwards, during deposit, rewards are distributed
+    //         - Withdraw DVT tokens and pay for flashloan
     function deposit(uint256 amountToDeposit) external {
         if (amountToDeposit == 0) revert MustDepositTokens();
 
@@ -65,6 +70,7 @@ contract TheRewarderPool {
     function distributeRewards() public returns (uint256) {
         uint256 rewards = 0;
 
+        // EXPLAIN - I can record snapshot with my deposit, if I am the first depositor in the new round
         if (isNewRewardsRound()) {
             _recordSnapshot();
         }
@@ -90,6 +96,9 @@ contract TheRewarderPool {
         roundNumber++;
     }
 
+    // EXPLAIN - This check is wrong
+    //         - A user should be able to claim rewards once 5 days have passed
+    //         - Check should be more like: lastRewardTimestamps[account] + REWARDS_ROUND_MIN_DURATION <= lastRecordedSnapshotTimestamp
     function _hasRetrievedReward(address account) private view returns (bool) {
         return (
             lastRewardTimestamps[account] >= lastRecordedSnapshotTimestamp
